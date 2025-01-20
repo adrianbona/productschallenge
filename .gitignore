@@ -24,3 +24,4 @@ yarn-error.log*
 
 # PyCharm files
 .idea
+package-lock.json
