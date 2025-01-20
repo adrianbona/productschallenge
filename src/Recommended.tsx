@@ -13,8 +13,8 @@ function Recommended() {
   }, []);
 
   return (
-    <main>
-      <h1>Recommended products</h1>
+    <>
+      <h2>Recommended products</h2>
       <ul>
         {[...products]
           .sort(() => (Math.random() > 0.5 ? 1 : -1))
@@ -28,7 +28,7 @@ function Recommended() {
             />
           ))}
       </ul>
-    </main>
+    </>
   );
 }
 

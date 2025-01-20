@@ -71,6 +71,12 @@ function Search() {
       <input
         name="text"
         placeholder="Search..."
+        style={{
+          width: "100%",
+          maxWidth: "1024px",
+          borderRadius: "4px",
+          boxShadow: "0 0 12px rgba(0,0,0,0.1)",
+        }}
         type="text"
         onChange={(e) => setQueryDebounced(e.target.value)}
       />
