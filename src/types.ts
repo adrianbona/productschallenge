@@ -8,3 +8,11 @@ export interface Product {
   updatedAt: string;
   category: any;
 }
+
+export interface ProductCard {
+  title: string;
+  description: string;
+  price: number;
+  className: string;
+  onClick?: () => void;
+}

@@ -3,6 +3,7 @@ import type {Product} from "./types";
 import {useEffect, useState} from "react";
 
 import api from "./api";
+import ProductCard from "./ProductCard";
 
 function Recommended() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -19,11 +20,12 @@ function Recommended() {
           .sort(() => (Math.random() > 0.5 ? 1 : -1))
           .slice(0, 2)
           .map((product) => (
-            <li key={product.id}>
-              <h4>{product.title}</h4>
-              <p className="product-description">{product.description}</p>
-              <span>$ {product.price}</span>
-            </li>
+            <ProductCard
+              key={`product-${product.id}`}
+              description={product.description}
+              price={product.price}
+              title={product.title}
+            />
           ))}
       </ul>
     </main>

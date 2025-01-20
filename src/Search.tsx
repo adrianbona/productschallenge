@@ -3,8 +3,9 @@ import type {Product} from "./types";
 import {useEffect, useState} from "react";
 
 import api from "./api";
+import ProductCard from "./ProductCard";
 
-export const debounce = <T extends (...args: any[]) => any>(callback: T, waitFor: number) => {
+const debounce = <T extends (...args: any[]) => any>(callback: T, waitFor: number) => {
   let timeout: ReturnType<typeof setTimeout>;
 
   return (...args: Parameters<T>): ReturnType<T> => {
@@ -51,7 +52,7 @@ function Search() {
 
   const setQueryDebounced = debounce(setQuery, 100);
 
-  const handleClickProduct = (productId: number) => {
+  const handleProductClick = (productId: number) => {
     setProductsFav((prevProductsFav) => {
       const newProductsFav = new Set(prevProductsFav);
 
@@ -75,17 +76,14 @@ function Search() {
       />
       <ul>
         {products.map((product) => (
-          <li
-            key={product.id}
+          <ProductCard
+            key={`product-card-${product.id}`}
             className={productsFav.has(product.id) ? "fav" : ""}
-            onClick={() => {
-              handleClickProduct(product.id);
-            }}
-          >
-            <h4>{product.title}</h4>
-            <p className="product-description">{product.description}</p>
-            <span>$ {product.price}</span>
-          </li>
+            description={product.description}
+            price={product.price}
+            title={product.title}
+            onClick={() => handleProductClick(product.id)}
+          />
         ))}
       </ul>
     </>
