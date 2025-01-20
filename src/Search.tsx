@@ -20,11 +20,11 @@ export const debounce = <T extends (...args: any[]) => any>(callback: T, waitFor
 };
 
 function Search() {
-  const storedProductsFav = localStorage.getItem("productsFav");
+  const storedProductsFav: string = JSON.parse(localStorage.getItem("productsFav"));
   const [products, setProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState<string>("");
   const [productsFav, setProductsFav] = useState<Set<number>>(
-    storedProductsFav ? new Set(JSON.parse(storedProductsFav)) : new Set(),
+    storedProductsFav ? new Set(storedProductsFav) : new Set(),
   );
 
   useEffect(() => {
@@ -34,6 +34,20 @@ function Search() {
   useEffect(() => {
     localStorage.setItem("productsFav", JSON.stringify(Array.from(productsFav)));
   }, [productsFav]);
+
+  useEffect(() => {
+    const handleStorageChange = (event) => {
+      if (event.key === "productsFav") {
+        setProductsFav(new Set(JSON.parse(event.newValue)));
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   const setQueryDebounced = debounce(setQuery, 100);
 
