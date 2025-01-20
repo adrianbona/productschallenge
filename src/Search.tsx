@@ -4,41 +4,58 @@ import {useEffect, useState} from "react";
 
 import api from "./api";
 
-function debounce(func: any, delay: number) {
-  let timer: number;
+export const debounce = <T extends (...args: any[]) => any>(callback: T, waitFor: number) => {
+  let timeout: ReturnType<typeof setTimeout>;
 
-  return function (...args: any[]) {
-    clearTimeout(timer);
-    timer = setTimeout(() => func.apply(this, args), delay);
+  return (...args: Parameters<T>): ReturnType<T> => {
+    let result: any;
+
+    timeout && clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      result = callback(...args);
+    }, waitFor);
+
+    return result;
   };
-}
+};
 
 function Search() {
+  const storedProductsFav = localStorage.getItem("productsFav");
   const [products, setProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState<string>("");
-  const [productsFav, setProductsFav] = useState<Set<number>>(new Set<number>());
+  const [productsFav, setProductsFav] = useState<Set<number>>(
+    storedProductsFav ? new Set(JSON.parse(storedProductsFav)) : new Set(),
+  );
 
   useEffect(() => {
     api.search(query).then(setProducts);
   }, [query]);
 
+  useEffect(() => {
+    localStorage.setItem("productsFav", JSON.stringify(Array.from(productsFav)));
+  }, [productsFav]);
+
   const setQueryDebounced = debounce(setQuery, 100);
 
   const handleClickProduct = (productId: number) => {
-    if (productsFav.has(productId)) {
-      productsFav.delete(productId);
-      setProductsFav(new Set([...productsFav]));
-    } else {
-      productsFav.add(productId);
-      setProductsFav(new Set([...productsFav]));
-    }
+    setProductsFav((prevProductsFav) => {
+      const newProductsFav = new Set(prevProductsFav);
+
+      if (newProductsFav.has(productId)) {
+        newProductsFav.delete(productId);
+      } else {
+        newProductsFav.add(productId);
+      }
+
+      return newProductsFav;
+    });
   };
 
   return (
     <>
       <input
         name="text"
-        placeholder="search..."
+        placeholder="Search..."
         type="text"
         onChange={(e) => setQueryDebounced(e.target.value)}
       />
@@ -60,6 +77,5 @@ function Search() {
     </>
   );
 }
-
 
 export default Search;
