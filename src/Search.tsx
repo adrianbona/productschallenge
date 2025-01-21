@@ -1,40 +1,54 @@
-import { useEffect, useState } from "react";
-import ProductCard from "./ProductCard";
-import api from "./api";
-import { Product } from "./types";
-import withLocalStorage from "./withLocalStorage";
+import type {Product} from "./types";
 
-function Search({
-  localStorageValue: storedProductsFav = [],
-  updateLocalStorage,
-}: {
-  localStorageValue: number[];
-  updateLocalStorage: (value: number[]) => void;
-}) {
+import {useEffect, useState} from "react";
+
+import api from "./api";
+import ProductCard from "./ProductCard";
+
+const debounce = <T extends (...args: any[]) => any>(callback: T, waitFor: number) => {
+  let timeout: ReturnType<typeof setTimeout>;
+
+  return (...args: Parameters<T>): ReturnType<T> => {
+    let result: any;
+
+    timeout && clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      result = callback(...args);
+    }, waitFor);
+
+    return result;
+  };
+};
+
+function Search() {
+  const storedProductsFav: Array<number> = JSON.parse(localStorage.getItem("productsFav") ?? "[]");
   const [products, setProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState<string>("");
-  const [productsFav, setProductsFav] = useState<Set<number>>(new Set(storedProductsFav));
+  const [productsFav, setProductsFav] = useState<Set<number>>(
+    storedProductsFav ? new Set(storedProductsFav) : new Set(),
+  );
 
   useEffect(() => {
     api.search(query).then(setProducts);
   }, [query]);
 
   useEffect(() => {
-    updateLocalStorage(Array.from(productsFav));
-  }, [productsFav, updateLocalStorage]);
+    localStorage.setItem("productsFav", JSON.stringify(Array.from(productsFav)));
+  }, [productsFav]);
 
   useEffect(() => {
-    setProductsFav(new Set(storedProductsFav));
-  }, [storedProductsFav]);
-
-  const debounce = <T extends (...args: any[]) => any>(callback: T, waitFor: number) => {
-    let timeout: ReturnType<typeof setTimeout>;
-
-    return (...args: Parameters<T>): void => {
-      if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(() => callback(...args), waitFor);
+    const handleStorageChange = (event: any) => {
+      if (event.key === "productsFav") {
+        setProductsFav(new Set(JSON.parse(event.newValue)));
+      }
     };
-  };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   const setQueryDebounced = debounce(setQuery, 100);
 
@@ -76,4 +90,4 @@ function Search({
   );
 }
 
-export default withLocalStorage(Search, "productsFav");
+export default Search;
