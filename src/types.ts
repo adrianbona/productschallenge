@@ -13,6 +13,6 @@ export interface ProductCard {
   title: string;
   description: string;
   price: number;
-  className: string;
+  className?: string;
   onClick?: () => void;
 }

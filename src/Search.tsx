@@ -21,7 +21,7 @@ const debounce = <T extends (...args: any[]) => any>(callback: T, waitFor: numbe
 };
 
 function Search() {
-  const storedProductsFav: string = JSON.parse(localStorage.getItem("productsFav"));
+  const storedProductsFav: Array<number> = JSON.parse(localStorage.getItem("productsFav") ?? "[]");
   const [products, setProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState<string>("");
   const [productsFav, setProductsFav] = useState<Set<number>>(
@@ -37,7 +37,7 @@ function Search() {
   }, [productsFav]);
 
   useEffect(() => {
-    const handleStorageChange = (event) => {
+    const handleStorageChange = (event: any) => {
       if (event.key === "productsFav") {
         setProductsFav(new Set(JSON.parse(event.newValue)));
       }
