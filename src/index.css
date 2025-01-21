@@ -35,8 +35,12 @@ input {
   outline: none;
 }
 
-input:focus {
+input:hover {
   border: 1px solid pink;
+}
+
+input:focus {
+  border: 1px solid red;
 }
 
 ul {
@@ -54,6 +58,7 @@ li {
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
+  cursor: pointer;
 }
 
 h4 {
