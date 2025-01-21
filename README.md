@@ -9,7 +9,7 @@
 
 # SPRINT 2:
 
-- [ ] What problems around the search do you think can happen or are happening now?
+- [x] What problems around the search do you think can happen or are happening now?
 
 - [ ] BE is ready now. Which one would you pick: https://fakestoreapi.com/docs or https://fakeapi.platzi.com/en/about/introduction/
 
