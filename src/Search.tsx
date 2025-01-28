@@ -24,9 +24,7 @@ function Search() {
   const storedProductsFav: Array<number> = JSON.parse(localStorage.getItem("productsFav") ?? "[]");
   const [products, setProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState<string>("");
-  const [productsFav, setProductsFav] = useState<Set<number>>(
-    storedProductsFav ? new Set(storedProductsFav) : new Set(),
-  );
+  const [productsFav, setProductsFav] = useState<Set<number>>(new Set(storedProductsFav));
 
   useEffect(() => {
     api.search(query).then(setProducts);
